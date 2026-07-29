@@ -1,1 +1,76 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فحص مخزون ClickMAG</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { font-family: system-ui, sans-serif; background: #f4f4f9; padding: 15px; margin: 0; text-align: center; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 15px; }
+        #reader { width: 100%; max-width: 400px; margin: 0 auto; border-radius: 8px; overflow: hidden; }
+        .badge { display: inline-block; padding: 6px 12px; background: #007bff; color: white; border-radius: 20px; font-weight: bold; }
+        .stock { font-size: 1.5rem; color: #28a745; font-weight: bold; margin-top: 10px; }
+        .out-of-stock { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <h2>فحص المقاس والمخزون</h2>
+    
+    <!-- منطقة القارئ بالكاميرا -->
+    <div id="reader"></div>
+
+    <!-- بطاقة عرض النتائج المباشرة -->
+    <div id="result" class="card" style="display: none;">
+        <h3 id="p-title">اسم الموديل</h3>
+        <p>المرجع: <strong id="p-ref">---</strong></p>
+        <p>اللون: <span id="p-color" class="badge">---</span> | المقاس: <span id="p-size" class="badge">---</span></p>
+        <div id="p-stock" class="stock">الكمية: 0</div>
+    </div>
+
+    <script>
+        // ضع هنا IP حاسوب الكاشير داخل شبكة الـ Wi-Fi المحلية
+        const SERVER_IP = "192.168.1.100"; 
+
+        async function onScanSuccess(decodedText) {
+            // إيقاف المسح مؤقتاً عند العثور على باركود
+            html5QrcodeScanner.clear();
+
+            try {
+                const response = await fetch(`http://${SERVER_IP}:3000/api/product/${decodedText}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const p = data.product;
+                    document.getElementById('p-title').innerText = p.designation;
+                    document.getElementById('p-ref').innerText = p.reference;
+                    document.getElementById('p-color').innerText = p.couleur;
+                    document.getElementById('p-size').innerText = p.taille;
+                    
+                    const stockEl = document.getElementById('p-stock');
+                    stockEl.innerText = `المخزون المتبقي: ${p.stock} قطعة`;
+                    
+                    if(p.stock > 0) {
+                        stockEl.className = "stock";
+                    } else {
+                        stockEl.className = "stock out-of-stock";
+                        stockEl.innerText = "غير متوفر بالمخزن!";
+                    }
+
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    alert('عفواً، لم يتم العثور على هذا الباركود في قاعدة البيانات!');
+                }
+            } catch (err) {
+                alert('تعذر الاتصال بسيرفر الكاشير. تأكد من الاتصال بنفس شبكة الـ Wi-Fi.');
+            }
+        }
+
+        // إعداد قارئ الباركود بالكاميرا
+        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+        html5QrcodeScanner.render(onScanSuccess);
+    </script>
+</body>
+</html>
