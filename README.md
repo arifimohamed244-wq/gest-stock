@@ -1,0 +1,2 @@
+# gest-stock
+stock generation
