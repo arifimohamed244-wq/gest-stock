@@ -20,6 +20,100 @@
     </style>
 </head>
 <body>
+    <script>
+        // ==========================================
+// 1. قاعدة بيانات تجريبية بالباركودات المطلوبة (468 و 275)
+// ==========================================
+const MOCK_DATABASE = {
+  // القطعة الأولى: باركود 468
+  "468": {
+    name: "قميص كلاسيك - ForYou",
+    barcode: "468",
+    variants: [
+      { color: "أزرق", size: "M", quantity: 4 },
+      { color: "أزرق", size: "L", quantity: 0 },
+      { color: "أسود", size: "XL", quantity: 2 }
+    ]
+  },
+  
+  // القطعة الثانية: باركود 275
+  "275": {
+    name: "سروال جينز - ForYou",
+    barcode: "275",
+    variants: [
+      { color: "رمادي", size: "38", quantity: 5 },
+      { color: "رمادي", size: "40", quantity: 1 },
+      { color: "كحلي", size: "42", quantity: 0 }
+    ]
+  }
+};
+
+// ==========================================
+// 2. دالة جلب البيانات (تجريبية + حقيقية)
+// ==========================================
+async function fetchProductDetails(barcode) {
+  const resultDiv = document.getElementById('product-result');
+  resultDiv.innerHTML = `<p style="color: var(--primary-color);">جاري البحث عن المقاسات والألوان...</p>`;
+
+  // أولاً: البحث في البيانات التجريبية على الهاتف
+  if (MOCK_DATABASE[barcode]) {
+    setTimeout(() => {
+      renderProductCard(MOCK_DATABASE[barcode]);
+    }, 400); // محاكاة تأخير بسيط للشبكة
+    return;
+  }
+
+  // ثانياً: إذا لم يجد الباركود تجريبياً، يربط بالسيرفر الحقيقي (ClickMag)
+  try {
+    const CLICKMAG_SERVER_IP = "192.168.1.100"; // استبدله بـ IP الكاشير لاحقاً
+    const CLICKMAG_PORT = "8080";
+    const response = await fetch(`http://${CLICKMAG_SERVER_IP}:${CLICKMAG_PORT}/api/product/${barcode}`);
+    
+    if (!response.ok) throw new Error();
+    const data = await response.json();
+    renderProductCard(data);
+
+  } catch (error) {
+    resultDiv.innerHTML = `
+      <div style="color: red; padding: 12px; border: 1px solid red; border-radius: 8px; margin-top: 10px;">
+        ⚠️ المنتج غير موجود في البيانات التجريبية وتعذر الاتصال بالكاشير.<br>
+        <small>الباركود الممسوح: <b>${barcode}</b></small>
+      </div>
+    `;
+  }
+}
+
+// ==========================================
+// 3. عرض البيانات في الواجهة
+// ==========================================
+function renderProductCard(product) {
+  const resultDiv = document.getElementById('product-result');
+
+  let itemsHTML = product.variants.map(variant => `
+    <div class="stock-info" style="margin-bottom: 8px;">
+      <div>
+        <strong>اللون:</strong> ${variant.color} | 
+        <strong>المقاس:</strong> ${variant.size}
+      </div>
+      <div class="stock-qty" style="color: ${variant.quantity > 0 ? '#008BA3' : 'red'};">
+        ${variant.quantity > 0 ? `${variant.quantity} قطعة` : 'نفذت الكمية'}
+      </div>
+    </div>
+  `).join('');
+
+  resultDiv.innerHTML = `
+    <div class="product-card">
+      <div class="product-title">${product.name}</div>
+      <p style="color: var(--text-muted); font-size: 14px;">الباركود: ${product.barcode}</p>
+      <hr style="border: 0.5px solid #eee; margin: 10px 0;">
+      <h4 style="margin-bottom: 10px; text-align: right;">المقاسات والألوان المتوفرة:</h4>
+      ${itemsHTML}
+    </div>
+  `;
+}
+
+    </script>
+
 
     <h2>فحص المقاس والمخزون</h2>
     
