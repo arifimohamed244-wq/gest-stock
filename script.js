@@ -6,30 +6,12 @@ const productDatabase = [
     { code: '55667788', name: 'Cap SELEKT Logo', price: 25.000 }
 ];
 
-// --- 2. إعداد مكتبة html5-qrcode وتحديد أنواع الباركود المطلوبة ---
-const supportedFormats = [
-    Html5QrcodeSupportedFormats.EAN_13,
-    Html5QrcodeSupportedFormats.EAN_8,
-    Html5QrcodeSupportedFormats.CODE_128,
-    Html5QrcodeSupportedFormats.CODE_39,
-    Html5QrcodeSupportedFormats.UPC_A,
-    Html5QrcodeSupportedFormats.UPC_E,
-    Html5QrcodeSupportedFormats.QR_CODE
-];
+// تعريف المتغيرات هنا لتكون متاحة للجميع
+let html5QrCode;
+let resultElement;
 
-const html5QrCode = new Html5Qrcode("reader", {
-    formatsToSupport: supportedFormats,
-    experimentalFeatures: {
-        useBarCodeDetectorIfSupported: true
-    }
-});
-
-const resultElement = document.getElementById('product-result');
-
-// --- 3. دالة معالجة الكود عند العثور عليه ---
+// --- 2. دالة معالجة الكود عند العثور عليه ---
 function onScanSuccess(decodedText) {
-    const isDemo = document.getElementById('cfg-demo')?.checked;
-    
     // البحث عن المنتج في قاعدة البيانات المحلية
     const product = productDatabase.find(p => p.code === decodedText);
 
@@ -53,8 +35,28 @@ function onScanSuccess(decodedText) {
     }
 }
 
-// --- 4. تشغيل الكاميرا المباشرة ---
+// --- 3. تشغيل الكاميرا المباشرة ---
 function startScanner() {
+    const supportedFormats = [
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.EAN_8,
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.CODE_39,
+        Html5QrcodeSupportedFormats.UPC_A,
+        Html5QrcodeSupportedFormats.UPC_E,
+        Html5QrcodeSupportedFormats.QR_CODE
+    ];
+
+    // ربط الواجهة بعد تحميل الصفحة
+    resultElement = document.getElementById('product-result');
+
+    html5QrCode = new Html5Qrcode("reader", {
+        formatsToSupport: supportedFormats,
+        experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+        }
+    });
+
     const config = { 
         fps: 10, 
         qrbox: { width: 250, height: 150 },
@@ -67,10 +69,13 @@ function startScanner() {
         onScanSuccess
     ).catch(err => {
         console.error("خطأ في تشغيل الكاميرا:", err);
+        if(resultElement) {
+            resultElement.innerHTML = `<div style="color:red; padding:10px;">عذراً، حدث خطأ في الوصول للكاميرا: ${err}</div>`;
+        }
     });
 }
 
-// تشغيل الكاميرا تلقائياً عند فتح الصفحة
+// --- 4. تأجيل التشغيل حتى تكتمل عناصر الـ HTML ---
 window.addEventListener('load', () => {
     startScanner();
 });
