@@ -1,101 +1,130 @@
-/* ==========================================
-   تنسيقات شاشة فحص المقاس والمخزون - ForYou
-   ========================================== */
-
-:root {
-  --primary-color: #00BCD4;      /* الأزرق السماوي للشعار */
-  --primary-dark: #008BA3;       /* أزرق داكن للحالات عند الضغط */
-  --bg-color: #F4F7F8;           /* خلفية خفيفة ومريحة للعين */
-  --card-bg: #FFFFFF;            /* خلفية الكروت والأقسام */
-  --text-color: #222222;           /* لون النص من ظل الشخصية */
-  --text-muted: #666666;          /* نص ثانوية رمادي */
-  --border-radius: 12px;         /* انحناء الحواف المودرن */
-}
-
+/* تنسيقات عامة للموقع */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  margin: 0;
-  padding: 16px;
-  direction: rtl;
-  text-align: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: #f4f4f9;
+    padding: 15px;
+    margin: 0;
+    text-align: center;
 }
 
-/* العنوان الرئيسي */
-h1, h2 {
-  color: var(--text-color);
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  border-bottom: 3px solid var(--primary-color);
-  display: inline-block;
-  padding-bottom: 6px;
+/* زر الإعدادات */
+.settings-btn {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
 }
 
-/* حاوي الكاميرا وقارئ الباركود */
+/* إطار كاميرا الباركود */
 #reader {
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto 20px auto;
-  border: 3px solid var(--primary-color);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.15);
-  background-color: #000;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-/* بطاقة عرض نتائج المنتج */
+/* كارت عرض بيانات المنتج */
 .product-card {
-  background-color: var(--card-bg);
-  border-radius: var(--border-radius);
-  padding: 20px;
-  margin: 15px auto;
-  max-width: 400px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  text-align: right;
-  border-right: 5px solid var(--primary-color);
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    direction: ltr;
 }
 
 .product-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--text-color);
-  margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
 }
 
-/* تنسيق تفاصيل المقاسات والمخزون */
 .stock-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #E0F7FA;
-  padding: 12px 16px;
-  border-radius: 8px;
-  margin-top: 10px;
+    border-bottom: 1px solid #eee;
+    padding: 8px 0;
+    color: #555;
 }
 
-.stock-qty {
-  font-size: 20px;
-  font-weight: bold;
-  color: var(--primary-dark);
+/* نافذة الإعدادات (Modal) */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
-/* أزرار التحكم */
-.btn {
-  background-color: var(--primary-color);
-  color: #FFFFFF;
-  border: none;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  width: 100%;
-  max-width: 400px;
+.modal-content {
+    background: white;
+    margin: 20% auto;
+    padding: 20px;
+    width: 85%;
+    max-width: 350px;
+    border-radius: 12px;
+    text-align: left;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-.btn:active {
-  background-color: var(--primary-dark);
+.modal-content h3 {
+    margin-top: 0;
+    color: #222;
 }
+
+.modal-content label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.modal-content input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px !important;
+    cursor: pointer;
+}
+
+.modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.modal-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-cancel {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-save {
+    background: #00BCD4;
+    color: white;
+}
+
