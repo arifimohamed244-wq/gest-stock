@@ -1,53 +1,53 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scanner ClickMAG</title>
-    <!-- الربط مع ملف Manifest -->
+    <!-- Lien Manifest PWA -->
     <link rel="manifest" href="manifest.json">
-    <!-- الربط مع CSS -->
+    <!-- Lien CSS -->
     <link rel="stylesheet" href="style.css">
-    <!-- مكتبة قراءة الباركود -->
+    <!-- Bibliothèque Scanner QR & Barcode -->
     <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body>
 
-    <!-- زر الإعدادات -->
+    <!-- Bouton Paramètres -->
     <button onclick="openSettingsModal()" class="settings-btn">⚙️</button>
 
     <div class="container">
         <h2>Scanner ClickMAG</h2>
 
-        <!-- منطقة البحث اليدوي والكشاف -->
+        <!-- Recherche manuelle & Lampe torche -->
         <div class="controls-section">
             <div class="manual-search">
-                <input type="text" id="manual-code" placeholder="أدخل الكود يدوياً...">
-                <button onclick="manualSearch()">بحث</button>
+                <input type="text" id="manual-code" placeholder="Saisir le code manuellement...">
+                <button onclick="manualSearch()">Chercher</button>
             </div>
             
             <button id="torch-btn" onclick="toggleFlashlight()" class="torch-btn">
-                🔦 تشغيل الكشاف
+                🔦 Activer la lampe
             </button>
         </div>
 
-        <!-- واجهة الماسح الضوئي -->
+        <!-- Zone du Scanner Caméra -->
         <div id="reader"></div>
         
-        <!-- منطقة عرض النتائج -->
+        <!-- Zone d'affichage des résultats -->
         <div id="product-result"></div>
     </div>
 
-    <!-- نافذة الإعدادات (Modal) -->
+    <!-- Fenêtre des Paramètres (Modal) -->
     <div id="settings-modal" class="modal-overlay">
         <div class="modal-content">
             <h3>Paramètres de connexion</h3>
             
-            <label for="cfg-ip">IP de la caisse :</label>
-            <input type="text" id="cfg-ip">
+            <label for="cfg-ip">Adresse IP de la caisse :</label>
+            <input type="text" id="cfg-ip" placeholder="ex: 192.168.1.50">
 
             <label for="cfg-port">Port :</label>
-            <input type="text" id="cfg-port">
+            <input type="text" id="cfg-port" placeholder="ex: 8080">
 
             <label class="checkbox-label">
                 <input type="checkbox" id="cfg-demo"> Mode Démo
@@ -63,5 +63,6 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
