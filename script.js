@@ -5,7 +5,7 @@ let isTorchOn = false;
 
 const productDatabase = [
     { 
-        code: '12345678', 
+        code: '0275', 
         name: 'T-Shirt SELEKT Classic', 
         price: 45.000,
         variants: [
