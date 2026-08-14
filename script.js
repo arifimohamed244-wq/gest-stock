@@ -1,7 +1,7 @@
 // --- 1. قاعدة البيانات التجريبية (تتضمن المقاسات والألوان والكميات) ---
 const productDatabase = [
     { 
-        code: '12345678', 
+        code: '6192432500204', 
         name: 'T-Shirt SELEKT Classic', 
         price: 45.000,
         variants: [
