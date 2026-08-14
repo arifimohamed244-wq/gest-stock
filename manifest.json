@@ -1,17 +1,21 @@
 {
-  "name": "ForYou Stock",
+  "name": "ForYou",
   "short_name": "ForYou",
-  "description": "تطبيق فحص المقاس والمخزون - ForYou",
-  "start_url": "/gest-stock/",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#F4F7F8",
+  "background_color": "#ffffff",
   "theme_color": "#00BCD4",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "https://arifimohamed244-wq.github.io/gest-stock/icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "./icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ]
 }
-
