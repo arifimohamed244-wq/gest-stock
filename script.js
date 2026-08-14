@@ -1,7 +1,7 @@
 // --- 1. قاعدة البيانات التجريبية (Demo Mode) ---
 const productDatabase = [
     { code: '12345678', name: 'T-Shirt SELEKT Classic', price: 45.000 },
-    { code: '87654321', name: 'Hoodie Black Edition', price: 89.000 },
+    { code: '6194039501011', name: 'Hoodie Black Edition', price: 89.000 },
     { code: '11223344', name: 'Cargo Pants Oversized', price: 65.000 },
     { code: '55667788', name: 'Cap SELEKT Logo', price: 25.000 }
 ];
