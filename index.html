@@ -20,155 +20,72 @@
     </style>
 </head>
 <body>
-    <script>
-        // ==========================================
-// 1. قاعدة بيانات تجريبية بالباركودات المطلوبة (468 و 275)
-// ==========================================
-const MOCK_DATABASE = {
-  // القطعة الأولى: باركود 468
-  "468": {
-    name: "قميص كلاسيك - ForYou",
-    barcode: "468",
-    variants: [
-      { color: "أزرق", size: "M", quantity: 4 },
-      { color: "أزرق", size: "L", quantity: 0 },
-      { color: "أسود", size: "XL", quantity: 2 }
-    ]
-  },
+  <!-- زر الإعدادات والنافذة المنبثقة -->
+  <button onclick="openSettingsModal()" style="position: absolute; top: 15px; left: 15px; background: none; border: none; font-size: 22px; cursor: pointer;">⚙️</button>
   
-  // القطعة الثانية: باركود 275
-  "275": {
-    name: "سروال جينز - ForYou",
-    barcode: "275",
-    variants: [
-      { color: "رمادي", size: "38", quantity: 5 },
-      { color: "رمادي", size: "40", quantity: 1 },
-      { color: "كحلي", size: "42", quantity: 0 }
-    ]
-  }
-};
-
-// ==========================================
-// 2. دالة جلب البيانات (تجريبية + حقيقية)
-// ==========================================
-async function fetchProductDetails(barcode) {
-  const resultDiv = document.getElementById('product-result');
-  resultDiv.innerHTML = `<p style="color: var(--primary-color);">جاري البحث عن المقاسات والألوان...</p>`;
-
-  // أولاً: البحث في البيانات التجريبية على الهاتف
-  if (MOCK_DATABASE[barcode]) {
-    setTimeout(() => {
-      renderProductCard(MOCK_DATABASE[barcode]);
-    }, 400); // محاكاة تأخير بسيط للشبكة
-    return;
-  }
-
-  // ثانياً: إذا لم يجد الباركود تجريبياً، يربط بالسيرفر الحقيقي (ClickMag)
-  try {
-    const CLICKMAG_SERVER_IP = "192.168.1.100"; // استبدله بـ IP الكاشير لاحقاً
-    const CLICKMAG_PORT = "8080";
-    const response = await fetch(`http://${CLICKMAG_SERVER_IP}:${CLICKMAG_PORT}/api/product/${barcode}`);
-    
-    if (!response.ok) throw new Error();
-    const data = await response.json();
-    renderProductCard(data);
-
-  } catch (error) {
-    resultDiv.innerHTML = `
-      <div style="color: red; padding: 12px; border: 1px solid red; border-radius: 8px; margin-top: 10px;">
-        ⚠️ المنتج غير موجود في البيانات التجريبية وتعذر الاتصال بالكاشير.<br>
-        <small>الباركود الممسوح: <b>${barcode}</b></small>
-      </div>
-    `;
-  }
-}
-
-// ==========================================
-// 3. عرض البيانات في الواجهة
-// ==========================================
-function renderProductCard(product) {
-  const resultDiv = document.getElementById('product-result');
-
-  let itemsHTML = product.variants.map(variant => `
-    <div class="stock-info" style="margin-bottom: 8px;">
-      <div>
-        <strong>اللون:</strong> ${variant.color} | 
-        <strong>المقاس:</strong> ${variant.size}
-      </div>
-      <div class="stock-qty" style="color: ${variant.quantity > 0 ? '#008BA3' : 'red'};">
-        ${variant.quantity > 0 ? `${variant.quantity} قطعة` : 'نفذت الكمية'}
+  <div id="settings-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="background: white; margin: 20% auto; padding: 20px; width: 85%; max-width: 350px; border-radius: 12px; text-align: right; direction: rtl;">
+      <h3>إعدادات الاتصال</h3>
+      <label>IP الكاشة:</label>
+      <input type="text" id="cfg-ip" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+      <label>المنفذ (Port):</label>
+      <input type="text" id="cfg-port" style="width: 100%; padding: 8px; margin-bottom: 10px;">
+      <label><input type="checkbox" id="cfg-demo"> الوضع التجريبي</label>
+      <div style="margin-top: 15px; text-align: left;">
+        <button onclick="closeSettingsModal()">إلغاء</button>
+        <button onclick="saveConfig(document.getElementById('cfg-ip').value, document.getElementById('cfg-port').value, document.getElementById('cfg-demo').checked)">حفظ</button>
       </div>
     </div>
-  `).join('');
+  </div>
 
-  resultDiv.innerHTML = `
-    <div class="product-card">
-      <div class="product-title">${product.name}</div>
-      <p style="color: var(--text-muted); font-size: 14px;">الباركود: ${product.barcode}</p>
-      <hr style="border: 0.5px solid #eee; margin: 10px 0;">
-      <h4 style="margin-bottom: 10px; text-align: right;">المقاسات والألوان المتوفرة:</h4>
-      ${itemsHTML}
-    </div>
-  `;
-}
+  <div id="product-result"></div>
 
-    </script>
+  <script>
+    // الإعدادات الافتراضية
+    const DEFAULT_CONFIG = { ip: "192.168.1.15", port: "4900", useDemo: true };
 
+    function getConfig() {
+      const saved = localStorage.getItem('forYou_app_config');
+      return saved ? JSON.parse(saved) : DEFAULT_CONFIG;
+    }
 
-    <h2>فحص المقاس والمخزون</h2>
-    
-    <!-- منطقة القارئ بالكاميرا -->
-    <div id="reader"></div>
+    function saveConfig(ip, port, useDemo) {
+      localStorage.setItem('forYou_app_config', JSON.stringify({ ip, port, useDemo }));
+      alert("تم الحفظ!");
+      closeSettingsModal();
+    }
 
-    <!-- بطاقة عرض النتائج المباشرة -->
-    <div id="result" class="card" style="display: none;">
-        <h3 id="p-title">اسم الموديل</h3>
-        <p>المرجع: <strong id="p-ref">---</strong></p>
-        <p>اللون: <span id="p-color" class="badge">---</span> | المقاس: <span id="p-size" class="badge">---</span></p>
-        <div id="p-stock" class="stock">الكمية: 0</div>
-    </div>
+    function openSettingsModal() {
+      const config = getConfig();
+      document.getElementById('cfg-ip').value = config.ip;
+      document.getElementById('cfg-port').value = config.port;
+      document.getElementById('cfg-demo').checked = config.useDemo;
+      document.getElementById('settings-modal').style.display = 'block';
+    }
 
-    <script>
-        // ضع هنا IP حاسوب الكاشير داخل شبكة الـ Wi-Fi المحلية
-        const SERVER_IP = "192.168.1.100"; 
+    function closeSettingsModal() { document.getElementById('settings-modal').style.display = 'none'; }
 
-        async function onScanSuccess(decodedText) {
-            // إيقاف المسح مؤقتاً عند العثور على باركود
-            html5QrcodeScanner.clear();
+    // دالة البحث (تجريبي + حقيقي)
+    async function fetchProductDetails(barcode) {
+      const config = getConfig();
+      if (config.useDemo) {
+        // ضع هنا الباركودات التجريبية
+        const demoData = { "468": { name: "قميص كلاسيك", variants: [{ color: "أزرق", size: "M", quantity: 4 }] } };
+        if (demoData[barcode]) renderProductCard(demoData[barcode]);
+        else alert("غير موجود تجريبياً");
+      } else {
+        try {
+          const res = await fetch(`http://${config.ip}:${config.port}/api/product/${barcode}`);
+          const data = await res.json();
+          renderProductCard(data);
+        } catch(e) { alert("تعذر الاتصال بالكاشة"); }
+      }
+    }
 
-            try {
-                const response = await fetch(`http://${SERVER_IP}:3000/api/product/${decodedText}`);
-                const data = await response.json();
+    function renderProductCard(product) {
+       document.getElementById('product-result').innerHTML = `<div>${product.name}</div>`;
+    }
+  </script>
 
-                if (data.success) {
-                    const p = data.product;
-                    document.getElementById('p-title').innerText = p.designation;
-                    document.getElementById('p-ref').innerText = p.reference;
-                    document.getElementById('p-color').innerText = p.couleur;
-                    document.getElementById('p-size').innerText = p.taille;
-                    
-                    const stockEl = document.getElementById('p-stock');
-                    stockEl.innerText = `المخزون المتبقي: ${p.stock} قطعة`;
-                    
-                    if(p.stock > 0) {
-                        stockEl.className = "stock";
-                    } else {
-                        stockEl.className = "stock out-of-stock";
-                        stockEl.innerText = "غير متوفر بالمخزن!";
-                    }
-
-                    document.getElementById('result').style.display = 'block';
-                } else {
-                    alert('عفواً، لم يتم العثور على هذا الباركود في قاعدة البيانات!');
-                }
-            } catch (err) {
-                alert('تعذر الاتصال بسيرفر الكاشير. تأكد من الاتصال بنفس شبكة الـ Wi-Fi.');
-            }
-        }
-
-        // إعداد قارئ الباركود بالكاميرا
-        let html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess);
-    </script>
 </body>
 </html>
